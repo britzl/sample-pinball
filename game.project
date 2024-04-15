@@ -1,0 +1,21 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 640
+height = 960
+
+[android]
+input_method = HiddenInputField
+
+[physics]
+debug = 1
+gravity_y = -900.0
+scale = 0.01
+
+[project]
+title = Pinball
+

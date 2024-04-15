@@ -1,0 +1,11 @@
+function init(self)
+	self.initial_position = go.get_position()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		if message.other_group == hash("respawn") then
+			go.set_position(self.initial_position)
+		end
+	end
+end

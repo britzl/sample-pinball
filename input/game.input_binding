@@ -1,0 +1,12 @@
+key_trigger {
+  input: KEY_LSHIFT
+  action: "left"
+}
+key_trigger {
+  input: KEY_RSHIFT
+  action: "right"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_1
+  action: "ball"
+}

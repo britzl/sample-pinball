@@ -1,0 +1,62 @@
+local FLIPPER_OFFSET = vmath.vector3(150, 0, 0)
+
+local function create_flipper_joint(flipper, hinge)
+	local joint_type = physics.JOINT_TYPE_HINGE
+	local collisionobject_a = flipper
+	local joint_id = "hinge"
+	local position_a = vmath.vector3()
+	local collisionobject_b = hinge
+	local position_b = vmath.vector3()
+	local properties = {
+		reference_angle = math.rad(0), -- The bodyB angle minus bodyA angle in the reference state (radians).
+		lower_angle = math.rad(-25), -- The lower angle for the joint limit (radians).
+		upper_angle = math.rad(25), -- The upper angle for the joint limit (radians).
+		max_motor_torque = nil, -- The maximum motor torque used to achieve the desired motor speed. Usually in N-m.
+		motor_speed = nil, -- The desired motor speed. Usually in radians per second.
+		enable_limit = true, -- A flag to enable joint limits.
+		enable_motor = false, -- A flag to enable the joint motor.
+	}
+	physics.create_joint(joint_type, collisionobject_a, joint_id, position_a, collisionobject_b, position_b, properties)
+end
+
+
+function init(self)
+	create_flipper_joint("leftflipper#collisionobject", "lefthinge#collisionobject")
+	create_flipper_joint("rightflipper#collisionobject", "righthinge#collisionobject")
+
+	msg.post(".", "acquire_input_focus")
+	self.left = false
+	self.right = false
+end
+
+
+local function apply_flipper_force(flipper, offset)
+	local position = go.get_position(flipper)
+	local message = {
+		position = position + offset,
+		force = vmath.vector3(0, 10000*50, 0) -- times mass
+	}
+	msg.post(flipper, "apply_force", message)
+end
+
+function update(self, dt)
+	if self.left then
+		apply_flipper_force("leftflipper#collisionobject", FLIPPER_OFFSET)
+	end
+	if self.right then
+		print("right")
+		apply_flipper_force("rightflipper#collisionobject", -FLIPPER_OFFSET)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	print(message_id)
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("left") then
+		self.left = action.value ~= 0
+	elseif action_id == hash("right") then
+		self.right = action.value ~= 0
+	end
+end
